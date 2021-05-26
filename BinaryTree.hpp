@@ -52,6 +52,18 @@ namespace ariel {
             delete (root);
         }
 
+        void remove(T data, node* ptr){
+            typedef typename multimap<T, node*>::iterator iterator;
+            std::pair<iterator, iterator> iterpair = map.equal_range(data);
+            iterator it = iterpair.first;
+            for (; it != iterpair.second; ++it) {
+                if (it->second == ptr) {
+                    map.erase(it);
+                    break;
+                }
+            }
+        }
+
         BinaryTree<T> &add_root(T data) {
             if (root== nullptr) { //root doesn't exits
                 root = new node();
@@ -59,52 +71,56 @@ namespace ariel {
                 map.insert({data, root});
             }
             else{ //root exists
-                typedef typename multimap<T, node*>::iterator iterator;
-                std::pair<iterator, iterator> iterpair = map.equal_range(data);
-                iterator it = iterpair.first;
-                for (; it != iterpair.second; ++it) {
-                    if (it->second == root) {
-                        root->info = data;
-                        map.insert({data, root});
-                        map.erase(it);
-                        break;
-                    }
-                }
+                root->info = data;
+                map.insert({data, root});
+                remove(data, root);
             }
             return *this;
         }
 
         BinaryTree<T> &add_left(T father, T son) {
-
+            auto f = map.find(father);
+            if (f!=map.end()){
+                if (f->second->left== nullptr){ //left son doesn't exists
+                    node* nd = new node(son);
+                    nd->father=f->second;
+                    f->second->left=nd;
+                    map.insert({son,nd});
+                }
+                else{ //son exists
+                    f->second->left->info = son;
+                    remove(son, f->second->left);
+                    map.insert({son,f->second->left});
+                }
+            }
+            else{
+                string message = "The first argument is not in the tree";
+                throw std::invalid_argument(message);
+            }
+            return *this;
         }
 
-        //        BinaryTree<T> &add_left(T father, T son) {
-//            for (auto it=begin_postorder(); it!=end_postorder(); ++it) {
-//                if (*it==father){ //found position
-//                    if (it->left== nullptr){ //address of node's left
-//                        it->left = new node(son);
-//                    }
-//                    else {
-//                        it->left.info = son;
-//                    }
-//                }
-//            }
-//            return *this;
-//        }
-//
-//        BinaryTree<T> &add_right(T father, T son) {
-//            for (auto it=begin_postorder(); it!=end_postorder(); ++it) {
-//                if (*it==father){ //found position
-//                    if (it->right== nullptr){ //address of node's left
-//                        it->right = new node(son);
-//                    }
-//                    else {
-//                        it->right.info = son;
-//                    }
-//                }
-//            }
-//            return *this;
-//        }
+        BinaryTree<T> &add_right(T father, T son) {
+            auto f = map.find(father);
+            if (f!=map.end()){
+                if (f->second->right== nullptr){ //left son doesn't exists
+                    node* nd = new node(son);
+                    nd->father=f->second;
+                    f->second->right=nd;
+                    map.insert({son,nd});
+                }
+                else{ //son exists
+                    f->second->right->info = son;
+                    remove(son, f->second->right);
+                    map.insert({son,f->second->right});
+                }
+            }
+            else{
+                string message = "The first argument is not in the tree";
+                throw std::invalid_argument(message);
+            }
+            return *this;
+        }
 
 //        friend std::ostream &operator<<(std::ostream &os, const BinaryTree &BinaryTree) {}
 
