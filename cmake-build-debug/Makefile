@@ -131,6 +131,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named test
+
+# Build rule for target.
+test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test
+.PHONY : test
+
+# fast build rule for target.
+test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
+.PHONY : test/fast
+
+#=============================================================================
 # Target rules for targets named demo
 
 # Build rule for target.
@@ -144,17 +157,17 @@ demo/fast:
 .PHONY : demo/fast
 
 #=============================================================================
-# Target rules for targets named test
+# Target rules for targets named test2
 
 # Build rule for target.
-test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test
-.PHONY : test
+test2: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test2
+.PHONY : test2
 
 # fast build rule for target.
-test/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
-.PHONY : test/fast
+test2/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test2.dir/build.make CMakeFiles/test2.dir/build
+.PHONY : test2/fast
 
 Demo.o: Demo.cpp.o
 
@@ -182,6 +195,33 @@ Demo.s: Demo.cpp.s
 Demo.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/Demo.cpp.s
 .PHONY : Demo.cpp.s
+
+StudentTest2.o: StudentTest2.cpp.o
+
+.PHONY : StudentTest2.o
+
+# target to build an object file
+StudentTest2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test2.dir/build.make CMakeFiles/test2.dir/StudentTest2.cpp.o
+.PHONY : StudentTest2.cpp.o
+
+StudentTest2.i: StudentTest2.cpp.i
+
+.PHONY : StudentTest2.i
+
+# target to preprocess a source file
+StudentTest2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test2.dir/build.make CMakeFiles/test2.dir/StudentTest2.cpp.i
+.PHONY : StudentTest2.cpp.i
+
+StudentTest2.s: StudentTest2.cpp.s
+
+.PHONY : StudentTest2.s
+
+# target to generate assembly for a file
+StudentTest2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test2.dir/build.make CMakeFiles/test2.dir/StudentTest2.cpp.s
+.PHONY : StudentTest2.cpp.s
 
 Test.o: Test.cpp.o
 
@@ -220,9 +260,13 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... demo"
 	@echo "... test"
+	@echo "... test2"
 	@echo "... Demo.o"
 	@echo "... Demo.i"
 	@echo "... Demo.s"
+	@echo "... StudentTest2.o"
+	@echo "... StudentTest2.i"
+	@echo "... StudentTest2.s"
 	@echo "... Test.o"
 	@echo "... Test.i"
 	@echo "... Test.s"

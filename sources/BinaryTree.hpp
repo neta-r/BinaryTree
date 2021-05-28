@@ -16,14 +16,9 @@ namespace ariel {
             node *right;
             node *father;
 
-            node() {
-                this->father = nullptr;
-                this->left = nullptr;
-                this->right = nullptr;
-            }
+            node()= default;
 
-            node(T info) {
-                this->info = info;
+            node(T info):info(info) {
                 this->father = nullptr;
                 this->left = nullptr;
                 this->right = nullptr;
@@ -38,7 +33,6 @@ namespace ariel {
         //class BinaryTree//
         std::multimap<T, node *> map;
         node *root;
-        int size = 0;
 
         BinaryTree() {
             root = nullptr;
@@ -60,23 +54,25 @@ namespace ariel {
 
         BinaryTree<T> &add_root(T data) {
             if (root == nullptr) { //root doesn't exits
-                size++;
-                root = new node();
-                root->info = data;
+                root = new node(data);
                 map.insert({data, root});
             } else { //root exists
+                T old_data = root->info;
                 root->info = data;
                 map.insert({data, root});
-                remove(data, root);
+                remove(old_data, root);
             }
             return *this;
         }
 
         BinaryTree<T> &add_left(T father, T son) {
+            if (root == nullptr){
+                std::string message = "There is no root";
+                throw std::invalid_argument(message);
+            }
             auto f = map.find(father);
             if (f != map.end()) {
                 if (f->second->left == nullptr) { //left son doesn't exists
-                    size++;
                     node *nd = new node(son);
                     nd->father = f->second;
                     f->second->left = nd;
@@ -94,10 +90,13 @@ namespace ariel {
         }
 
         BinaryTree<T> &add_right(T father, T son) {
+            if (root == nullptr){
+                std::string message = "There is no root";
+                throw std::invalid_argument(message);
+            }
             auto f = map.find(father);
             if (f != map.end()) {
                 if (f->second->right == nullptr) { //left son doesn't exists
-                    size++;
                     node *nd = new node(son);
                     nd->father = f->second;
                     f->second->right = nd;
@@ -114,7 +113,7 @@ namespace ariel {
             return *this;
         }
 
-//        friend std::ostream &operator<<(std::ostream &os, const BinaryTree &BinaryTree) {}
+        friend std::ostream &operator<<(std::ostream &os, const BinaryTree &BinaryTree) {return os;}
 
         class PreorderIterator {
         private:
@@ -210,7 +209,7 @@ namespace ariel {
             }
 
             T *operator->() const {
-                return &(p_curr);
+                return &(p_curr->info);
             }
 
             InorderIterator &operator++() {
@@ -299,7 +298,7 @@ namespace ariel {
                 return *this;
             }
 
-            const PostorderIterator operator++(int) {
+            PostorderIterator operator++(int) {
                 PostorderIterator tmp = *this;
                 s2.pop();
                 if (!s2.empty()) {
