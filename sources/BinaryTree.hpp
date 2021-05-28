@@ -3,7 +3,7 @@
 #include <map>
 #include <algorithm>
 #include <stack>
-
+#include <queue>
 
 namespace ariel {
     template<typename T>
@@ -57,7 +57,7 @@ namespace ariel {
 
         void remove(T data, node *ptr) {
             typedef typename std::multimap<T, node *>::iterator iterator;
-            std::pair <iterator, iterator> iterpair = map.equal_range(data);
+            std::pair<iterator, iterator> iterpair = map.equal_range(data);
             iterator it = iterpair.first;
             for (; it != iterpair.second; ++it) {
                 if (it->second == ptr) {
@@ -130,18 +130,18 @@ namespace ariel {
 
         private:
             node *p_curr;
-            std::stack<node*> temp_s;
-            std::vector<node*> myArray;
-            unsigned  i;
+            std::stack<node *> temp_s;
+            std::vector<node *> myArray;
+            unsigned i;
 
         public:
             PreorderIterator(node *root) : p_curr(root), i(0) {
-                int j=0;
+                int j = 0;
                 node *curr = root;
                 while (curr != nullptr || temp_s.empty() == false) {
                     while (curr != nullptr) {
                         temp_s.push(curr);
-                        myArray.insert(myArray.begin()+j,curr);
+                        myArray.insert(myArray.begin() + j, curr);
                         j++;
                         curr = curr->left;
                     }
@@ -158,7 +158,6 @@ namespace ariel {
 
             T *operator->() const {
                 return &(p_curr);
-//                return &(p_curr->info);
             }
 
             PreorderIterator &operator++() {
@@ -182,7 +181,7 @@ namespace ariel {
                 return p_curr != rhs.p_curr;
             }
         };
-        //end class InorderIterator//
+        //end class PreorderIterator//
 
         PreorderIterator begin_preorder() {
             return PreorderIterator{root};
@@ -198,10 +197,26 @@ namespace ariel {
 
         private:
             node *p_curr;
+            std::queue<node *> queue;
+            std::stack<node *> s;
         public:
-            InorderIterator(node *curr) {
-                this->p_curr = curr;
+            InorderIterator():p_curr(nullptr) {}
+
+            InorderIterator(node *root) {
+                node* curr = root;
+                while (curr != nullptr || s.empty() == false){
+                    while (curr !=  nullptr){
+                        s.push(curr);
+                        curr = curr->left;
+                    }
+                    curr = s.top();
+                    queue.push(curr);
+                    s.pop();
+                    curr = curr->right;
+                }
+                p_curr= queue.front();
             }
+
 
             T &operator*() const {
                 return p_curr->info;
@@ -212,22 +227,15 @@ namespace ariel {
             }
 
             InorderIterator &operator++() {
-                if (p_curr->left != nullptr) {
-                    p_curr = p_curr->left;
-                } else if (p_curr->left != nullptr) {
-                    p_curr = p_curr->right;
-                }
-//                } else {
-//                    p_curr; //TODO:CHANGE
-//                }
-                p_curr = p_curr->right;
+                queue.pop();
+                p_curr=queue.front();
                 return *this;
             }
 
             const InorderIterator operator++(int) {
-                //TODO: CHANGE
                 InorderIterator tmp = *this;
-                p_curr = p_curr->right;
+                queue.pop();
+                p_curr=queue.front();
                 return tmp;
             }
 
@@ -239,14 +247,14 @@ namespace ariel {
                 return p_curr != rhs.p_curr;
             }
         } iterator;
-        //end class PreorderIterator//
+        //end class InorderIterator//
 
         InorderIterator begin_inorder() {
             return InorderIterator{root};
         }
 
         InorderIterator end_inorder() {
-            return InorderIterator{nullptr};
+            return InorderIterator();
         }
 
         InorderIterator begin() {

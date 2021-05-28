@@ -11,7 +11,7 @@
 #include <stdexcept>
 using namespace std;
 
-#include "BinaryTree.hpp"
+#include "sources/BinaryTree.hpp"
 using namespace ariel;
 
 int main() {
@@ -30,13 +30,13 @@ int main() {
 //        |---|
 //        4   5
 //  */
-
-  for (auto it=tree_of_ints.begin_preorder(); it!=tree_of_ints.end_preorder(); ++it) {
-    cout << (*it) << " " ;
-  }  // prints: 1 2 4 5 3
-//  for (auto it=tree_of_ints.begin_inorder(); it!=tree_of_ints.end_inorder(); ++it) {
+//
+//  for (auto it=tree_of_ints.begin_preorder(); it!=tree_of_ints.end_preorder(); ++it) {
 //    cout << (*it) << " " ;
-//  }  // prints: 4 2 5 1 3
+//  }  // prints: 1 2 4 5 3
+  for (auto it=tree_of_ints.begin_inorder(); it!=tree_of_ints.end_inorder(); ++it) {
+    cout << (*it) << " " ;
+  }  // prints: 4 2 5 1 3
 //  for (auto it=tree_of_ints.begin_postorder(); it!=tree_of_ints.end_postorder(); ++it) {
 //    cout << (*it) << " " ;
 //  }  // prints: 4 5 2 3 1
@@ -57,12 +57,12 @@ int main() {
   .add_left("1", "2");     // Now 2 is the left child of 1, instead of 9 (the children of 9 remain in place)
 //  cout << tree_of_strings << endl;
 
-  for (auto it=tree_of_strings.begin_preorder(); it!=tree_of_strings.end_preorder(); ++it) {
-    cout << (*it) << " " ;
-  }  // prints: 1 2 4 5 3
-//  for (auto it=tree_of_strings.begin_inorder(); it!=tree_of_strings.end_inorder(); ++it) {
+//  for (auto it=tree_of_strings.begin_preorder(); it!=tree_of_strings.end_preorder(); ++it) {
 //    cout << (*it) << " " ;
-//  }  // prints: 4 2 5 1 3
+//  }  // prints: 1 2 4 5 3
+  for (auto it=tree_of_strings.begin_inorder(); it!=tree_of_strings.end_inorder(); ++it) {
+    cout << (*it) << " " ;
+  }  // prints: 4 2 5 1 3
 //  for (auto it=tree_of_strings.begin_postorder(); it!=tree_of_strings.end_postorder(); ++it) {
 //    cout << (*it) << " " ;
 //  }  // prints: 4 5 2 3 1
