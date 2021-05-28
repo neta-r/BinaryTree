@@ -200,12 +200,12 @@ namespace ariel {
             std::queue<node *> queue;
             std::stack<node *> s;
         public:
-            InorderIterator():p_curr(nullptr) {}
+            InorderIterator() : p_curr(nullptr) {}
 
             InorderIterator(node *root) {
-                node* curr = root;
-                while (curr != nullptr || s.empty() == false){
-                    while (curr !=  nullptr){
+                node *curr = root;
+                while (curr != nullptr || s.empty() == false) {
+                    while (curr != nullptr) {
                         s.push(curr);
                         curr = curr->left;
                     }
@@ -214,7 +214,7 @@ namespace ariel {
                     s.pop();
                     curr = curr->right;
                 }
-                p_curr= queue.front();
+                p_curr = queue.front();
             }
 
 
@@ -228,14 +228,14 @@ namespace ariel {
 
             InorderIterator &operator++() {
                 queue.pop();
-                p_curr=queue.front();
+                p_curr = queue.front();
                 return *this;
             }
 
             const InorderIterator operator++(int) {
                 InorderIterator tmp = *this;
                 queue.pop();
-                p_curr=queue.front();
+                p_curr = queue.front();
                 return tmp;
             }
 
@@ -269,10 +269,25 @@ namespace ariel {
             friend class node;
 
         private:
+            std::stack<node *> s1;
+            std::stack<node *> s2;
             node *p_curr;
         public:
-            PostorderIterator(node *curr) {
-                this->p_curr = curr;
+            PostorderIterator() : p_curr(nullptr) {}
+
+            PostorderIterator(node *root) {
+                s1.push(root);
+                node *curr = root;
+                while (!s1.empty()) {
+                    curr = s1.top();
+                    s1.pop();
+                    s2.push(curr);
+                    if (curr->left)
+                        s1.push(curr->left);
+                    if (curr->right)
+                        s1.push(curr->right);
+                }
+                p_curr=s2.top();
             }
 
             T &operator*() const {
@@ -284,15 +299,22 @@ namespace ariel {
             }
 
             PostorderIterator &operator++() {
-                //TODO: CHANGE
-                p_curr = p_curr->right;
+                s2.pop();
+                if (!s2.empty()){
+                    p_curr = s2.top();
+                }
+                else{
+                    p_curr = nullptr;
+                }
                 return *this;
             }
 
             const PostorderIterator operator++(int) {
-                //TODO: CHANGE
                 PostorderIterator tmp = *this;
-                p_curr = p_curr->right;
+                s2.pop();
+                if (!s2.empty()){
+                    p_curr = s2.top();
+                }
                 return tmp;
             }
 
@@ -311,7 +333,7 @@ namespace ariel {
         }
 
         PostorderIterator end_postorder() {
-            return PostorderIterator{nullptr};
+            return PostorderIterator{};
         }
 
     };
