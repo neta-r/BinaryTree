@@ -16,6 +16,22 @@ void check_pre(BinaryTree <T> t, string outcome) {
             CHECK(pre == outcome);
 }
 
+void check_pre(BinaryTree <string> t, string outcome) {
+    string pre;
+    for (auto it = t.begin_preorder(); it != t.end_preorder(); ++it) {
+        pre = pre + *it + " ";
+    }
+            CHECK(pre == outcome);
+}
+
+void check_post(BinaryTree <string> t, string outcome) {
+    string post;
+    for (auto it = t.begin_postorder(); it != t.end_postorder(); ++it) {
+        post = post + *it + " ";
+    }
+            CHECK(post == outcome);
+}
+
 template<typename T>
 void check_post(BinaryTree <T> t, string outcome) {
     string post;
@@ -23,6 +39,14 @@ void check_post(BinaryTree <T> t, string outcome) {
         post = post + to_string(*it) + " ";
     }
             CHECK(post == outcome);
+}
+
+void check_in(BinaryTree <string> t, string outcome) {
+    string in;
+    for (auto it = t.begin_inorder(); it != t.end_inorder(); ++it) {
+        in = in + *it + " ";
+    }
+            CHECK(in == outcome);
 }
 
 template<typename T>
@@ -52,9 +76,6 @@ TEST_CASE ("char tree") {
     CHECK_THROWS(t.add_right('Z', 'G'));
     // able to change the root
     CHECK_NOTHROW(t.add_root('A'));
-    // unable to change the root (type is not T-char)
-    CHECK_THROWS(t.add_root(5));
-    CHECK_THROWS(t.add_root("a"));
     /* this is the tree:
      *      A
      *     / \
@@ -80,6 +101,7 @@ TEST_CASE ("char tree") {
     check_post(t, "d E B F G c a ");
     check_in(t, "d B E a F c G ");
 }
+
 TEST_CASE ("int tree") {
     BinaryTree<int> t2;
     // root doesn't exists - throw exception
@@ -106,9 +128,6 @@ TEST_CASE ("int tree") {
     CHECK_THROWS(t2.add_right(36, 2));
     // able to change the root
     CHECK_NOTHROW(t2.add_root(25));
-    // unable to change the root (type is not T-int)
-    CHECK_THROWS(t2.add_root('5'));
-    CHECK_THROWS(t2.add_root("a"));
     /* this is the tree:
      *               25
      *          /          \
@@ -140,7 +159,7 @@ TEST_CASE ("int tree") {
 }
 
 TEST_CASE ("string tree") {
-    BinaryTree<string> t3;
+    BinaryTree <string> t3;
     // root doesn't exists - throw exception
     CHECK_THROWS(t3.add_left("cat", "dog"));
     // add root + add left + add right + concatenation tests (existing vertices)
@@ -160,9 +179,6 @@ TEST_CASE ("string tree") {
     CHECK_THROWS(t3.add_right("NetA", "dog"));
     // able to change the root
     CHECK_NOTHROW(t3.add_root("Hey!"));
-    // unable to change the root (type is not T-int)
-    CHECK_THROWS(t3.add_root('5'));
-    CHECK_THROWS(t3.add_root('a'));
     /* this is the tree:
      *              Hey!
      *          /          \
@@ -177,7 +193,7 @@ TEST_CASE ("string tree") {
     check_in(t3, "is my is Neta my Hey! and name this test ");
     // let's change some vertices and see the iterators changes - it should change
     CHECK_NOTHROW(t3.add_root("hi"));
-    CHECK_THROWS(t3.add_right("name", ",");
+    CHECK_THROWS(t3.add_right("name", ","));
     CHECK_NOTHROW(t3.add_left("Neta", "your"));
     /* this is the tree:
      *              hi
