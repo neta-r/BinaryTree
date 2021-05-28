@@ -36,6 +36,8 @@ void check_in(BinaryTree <T> t, string outcome) {
 
 TEST_CASE ("char tree") {
     BinaryTree<char> t;
+    // root doesn't exists - throw exception
+    CHECK_THROWS(t.add_left('Z', 'G'));
     // add root + add left + add right + concatenation tests (existing vertices)
     CHECK_NOTHROW(
             t.add_root('a')
@@ -80,6 +82,8 @@ TEST_CASE ("char tree") {
 }
 TEST_CASE ("int tree") {
     BinaryTree<int> t2;
+    // root doesn't exists - throw exception
+    CHECK_THROWS(t2.add_left(5, 700));
     // add root + add left + add right + concatenation tests (existing vertices)
     CHECK_NOTHROW(
             t2.add_root(26)
@@ -133,4 +137,58 @@ TEST_CASE ("int tree") {
     check_pre(t2, "-100 15 10 2147483647 12 22 18 24 50 35 31 -9 70 66 90 ");
     check_post(t2, "2147483647 12 10 18 24 22 15 31 -9 35 66 90 70 50 -100 ");
     check_in(t2, "2147483647 10 12 15 18 22 24 -100 31 35 -9 50 66 70 99 ");
+}
+
+TEST_CASE ("string tree") {
+    BinaryTree<string> t3;
+    // root doesn't exists - throw exception
+    CHECK_THROWS(t3.add_left("cat", "dog"));
+    // add root + add left + add right + concatenation tests (existing vertices)
+    CHECK_NOTHROW(
+            t3.add_root("hey")
+                    .add_left("hey", "my")
+                    .add_right("hey", "name")
+                    .add_left("my", "is")
+                    .add_right("my", "Neta")
+                    .add_left("name", "and")
+                    .add_right("name", "this")
+                    .add_left("Neta", "is")
+                    .add_right("Neta", "my")
+                    .add_right("this", "test"));
+    // add left + add right tests (non existing vertices)
+    CHECK_THROWS(t3.add_left("HEY", "cat"));
+    CHECK_THROWS(t3.add_right("NetA", "dog"));
+    // able to change the root
+    CHECK_NOTHROW(t3.add_root("Hey!"));
+    // unable to change the root (type is not T-int)
+    CHECK_THROWS(t3.add_root('5'));
+    CHECK_THROWS(t3.add_root('a'));
+    /* this is the tree:
+     *              Hey!
+     *          /          \
+     *        my          name
+     *     /     \       /     \
+     *    is    Neta    and   this
+     *          /  \             \
+     *         is  my           test
+     */
+    check_pre(t3, "Hey! my is Neta is my name and this test ");
+    check_post(t3, "is is my Neta my and test this name Hey! ");
+    check_in(t3, "is my is Neta my Hey! and name this test ");
+    // let's change some vertices and see the iterators changes - it should change
+    CHECK_NOTHROW(t3.add_root("hi"));
+    CHECK_THROWS(t3.add_right("name", ",");
+    CHECK_NOTHROW(t3.add_left("Neta", "your"));
+    /* this is the tree:
+     *              hi
+     *          /          \
+     *        my          name
+     *     /     \       /     \
+     *    is    Neta    ,     this
+     *          /  \             \
+     *         is  your         test
+     */
+    check_pre(t3, "hi my is Neta is your name , this test ");
+    check_post(t3, "is is your Neta my , test this name hi ");
+    check_in(t3, "is my is Neta your hi , name this test ");
 }
