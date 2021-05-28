@@ -13,7 +13,27 @@ using namespace std;
 
 #include "sources/BinaryTree.hpp"
 using namespace ariel;
+void check_pre(BinaryTree <int> t, const string& outcome) {
+    stringstream pre;
+    for (auto it=t.begin_preorder(); it!=t.end_preorder(); ++it) {
+        pre << (*it) << " " ;
+    }
+}
 
+void check_post(BinaryTree <int> t, const string& outcome) {
+    stringstream post;
+    for (auto it = t.begin_postorder(); it != t.end_postorder(); ++it) {
+        post << (*it) << " " ;
+    }
+}
+
+
+void check_in(BinaryTree <int> t, const string& outcome) {
+    stringstream in;
+    for (auto it = t.begin_inorder(); it != t.end_inorder(); ++it) {
+        in << (*it) << " " ;
+    }
+}
 int main() {
   BinaryTree<int> tree_of_ints;
   tree_of_ints.add_root(1)
@@ -50,9 +70,9 @@ int main() {
 
 
   // The same should work with other types, e.g. with strings:
-  
+
   BinaryTree<string> tree_of_strings;
-  tree_of_strings.add_root("1")     
+  tree_of_strings.add_root("1")
   .add_left("1", "9")      // Now 9 is the left child of 1
   .add_left("9", "4")      // Now 4 is the left child of 9
   .add_right("9", "5")     // Now 5 is the right child of 9
@@ -84,5 +104,4 @@ int main() {
     cout << element << " " ;
   }   // prints: 4 2 5 1 3
     cout << endl;
-
 }
