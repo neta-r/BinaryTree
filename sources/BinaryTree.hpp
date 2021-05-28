@@ -126,29 +126,27 @@ namespace ariel {
 //        friend std::ostream &operator<<(std::ostream &os, const BinaryTree &BinaryTree) {}
 
         class PreorderIterator {
-            friend class node;
-
         private:
+            std::stack<node*> s;
+            std::queue<node*> queue;
             node *p_curr;
-            std::stack<node *> temp_s;
-            std::vector<node *> myArray;
-            unsigned i;
 
         public:
-            PreorderIterator(node *root) : p_curr(root), i(0) {
-                int j = 0;
-                node *curr = root;
-                while (curr != nullptr || temp_s.empty() == false) {
-                    while (curr != nullptr) {
-                        temp_s.push(curr);
-                        myArray.insert(myArray.begin() + j, curr);
-                        j++;
-                        curr = curr->left;
-                    }
-                    curr = temp_s.top();
-                    temp_s.pop();
-                    curr = curr->right;
+            PreorderIterator():p_curr(nullptr){}
+
+            PreorderIterator(node *root){
+                s.push(root);
+                node* curr;
+                while (!s.empty()) {
+                    curr = s.top();
+                    s.pop();
+                    queue.push(curr);
+                    if (curr->right!=nullptr)
+                        s.push(curr->right);
+                    if (curr->left!=nullptr)
+                        s.push(curr->left);
                 }
+                p_curr = queue.front();
             }
 
 
@@ -161,15 +159,15 @@ namespace ariel {
             }
 
             PreorderIterator &operator++() {
-                i++;
-                p_curr = myArray[i];
+                queue.pop();
+                p_curr = queue.front();
                 return *this;
             }
 
             const PreorderIterator operator++(int) {
                 PreorderIterator tmp = *this;
-                p_curr = myArray[i];
-                i++;
+                queue.pop();
+                p_curr = queue.front();
                 return tmp;
             }
 
@@ -188,13 +186,11 @@ namespace ariel {
         }
 
         PreorderIterator end_preorder() {
-            return PreorderIterator{nullptr};
+            return PreorderIterator{};
         }
 
 
         typedef class InorderIterator {
-            friend class node;
-
         private:
             node *p_curr;
             std::queue<node *> queue;
