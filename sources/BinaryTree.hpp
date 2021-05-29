@@ -286,12 +286,11 @@ namespace ariel {
                 return *this;
             }
 
-//            const InorderIterator operator++(int) {
-//                InorderIterator tmp = *this;
-//                queue.pop();
-//                p_curr = queue.front();
-//                return tmp;
-//            }
+            const InorderIterator operator++(int) {
+                InorderIterator tmp = *this;
+                ++*this;
+                return tmp;
+            }
 
             bool operator==(const InorderIterator &rhs) const {
                 return p_curr == rhs.p_curr;
@@ -368,10 +367,7 @@ namespace ariel {
 
             PostorderIterator operator++(int) {
                 PostorderIterator tmp = *this;
-                s2.pop();
-                if (!s2.empty()) {
-                    p_curr = s2.top();
-                }
+                ++*this;
                 return tmp;
             }
 
