@@ -16,9 +16,9 @@ namespace ariel {
             node *right;
             node *father;
 
-            node()= default;
+            node() = default;
 
-            node(T info):info(info) {
+            node(T info) : info(info) {
                 this->father = nullptr;
                 this->left = nullptr;
                 this->right = nullptr;
@@ -26,6 +26,16 @@ namespace ariel {
 
             void setFather(node *father) {
                 this->father = father;
+            }
+
+            bool operator==(node other) {
+                return this->info == other->other && this->left == other->left &&
+                       this->right == other.right && this->father == other.father;
+            }
+
+            bool operator!=(node other) {
+                return this->info != other->other || this->left != other->left ||
+                       this->right != other.right || this->father != other.father;
             }
         };
         //end class node//
@@ -37,6 +47,39 @@ namespace ariel {
         BinaryTree() {
             root = nullptr;
         }
+
+        void copy_ctor(node *nd, const node *other_nd) {
+            if (other_nd->left != nullptr) {
+                nd->left = new node(other_nd->left->info);
+                copy_ctor(nd->left, other_nd->left);
+            }
+            if (other_nd->right != nullptr) {
+                nd->right = new node(other_nd->right->info);
+                copy_ctor(nd->right, other_nd->right);
+            }
+        }
+
+        BinaryTree &operator=(const BinaryTree<T> &bt) {
+            if (this == &bt) {
+                return *this;
+            }
+            if (root != nullptr) {
+                delete root;
+            }
+            if (bt.root != nullptr) {
+                root = new node{bt.root->info};
+                copy_ctor(root, bt.root);
+            }
+            return *this;
+        }
+
+        BinaryTree(const BinaryTree& bt) { //copy ctor
+            if(bt.root!= nullptr){
+                this->root = new node(bt.root->info);
+                copy_ctor(root,bt.root);
+            }
+        }
+
 
         //class BinaryTree//
 
@@ -66,7 +109,7 @@ namespace ariel {
         }
 
         BinaryTree<T> &add_left(T father, T son) {
-            if (root == nullptr){
+            if (root == nullptr) {
                 std::string message = "There is no root";
                 throw std::invalid_argument(message);
             }
@@ -90,7 +133,7 @@ namespace ariel {
         }
 
         BinaryTree<T> &add_right(T father, T son) {
-            if (root == nullptr){
+            if (root == nullptr) {
                 std::string message = "There is no root";
                 throw std::invalid_argument(message);
             }
@@ -113,7 +156,7 @@ namespace ariel {
             return *this;
         }
 
-        friend std::ostream &operator<<(std::ostream &os, const BinaryTree &BinaryTree) {return os;}
+        friend std::ostream &operator<<(std::ostream &os, const BinaryTree &BinaryTree) { return os; }
 
         class PreorderIterator {
         private:
@@ -326,7 +369,7 @@ namespace ariel {
         }
 
         ~BinaryTree() {
-            for (auto it=(*this).begin_postorder(); it!=(*this).end_postorder(); ++it) {
+            for (auto it = (*this).begin_postorder(); it != (*this).end_postorder(); ++it) {
                 delete it.curr_node();
             }
         }
