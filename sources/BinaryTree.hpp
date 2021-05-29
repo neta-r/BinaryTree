@@ -73,10 +73,10 @@ namespace ariel {
             return *this;
         }
 
-        BinaryTree(const BinaryTree& bt) { //copy ctor
-            if(bt.root!= nullptr){
+        BinaryTree(const BinaryTree &bt) { //copy ctor
+            if (bt.root != nullptr) {
                 this->root = new node(bt.root->info);
-                copy_ctor(root,bt.root);
+                copy_ctor(root, bt.root);
             }
         }
 
@@ -85,7 +85,7 @@ namespace ariel {
 
         void remove(T data, node *ptr) {
             typedef typename std::multimap<T, node *>::iterator iterator;
-            std::pair<iterator, iterator> iterpair = map.equal_range(data);
+            std::pair <iterator, iterator> iterpair = map.equal_range(data);
             iterator it = iterpair.first;
             for (; it != iterpair.second; ++it) {
                 if (it->second == ptr) {
@@ -192,15 +192,25 @@ namespace ariel {
             }
 
             PreorderIterator &operator++() {
-                queue.pop();
-                p_curr = queue.front();
+                if (queue.empty()) {
+                    p_curr = nullptr;
+                }
+                else{
+                    queue.pop();
+                    p_curr = queue.front();
+                }
                 return *this;
             }
 
             const PreorderIterator operator++(int) {
                 PreorderIterator tmp = *this;
-                queue.pop();
-                p_curr = queue.front();
+                if (queue.empty()) {
+                    p_curr = nullptr;
+                }
+                else{
+                    queue.pop();
+                    p_curr = queue.front();
+                }
                 return tmp;
             }
 
@@ -233,19 +243,17 @@ namespace ariel {
 
             InorderIterator(node *root) {
                 node *curr = root;
-                while (curr != nullptr || s.empty() == false) {
-                    while (curr != nullptr) {
-                        s.push(curr);
-                        curr = curr->left;
-                    }
-                    curr = s.top();
-                    queue.push(curr);
-                    s.pop();
-                    curr = curr->right;
+                //pushing all left nodes
+                while(curr!= nullptr){
+                    s.push(curr);
+                    curr = curr->left;
                 }
-                p_curr = queue.front();
+                if(s.empty()){ //no nodes in the tree
+                    p_curr= nullptr;
+                }else{ //taking the most left node as the first one
+                    p_curr = s.top();
+                }
             }
-
 
             T &operator*() const {
                 return p_curr->info;
@@ -256,17 +264,34 @@ namespace ariel {
             }
 
             InorderIterator &operator++() {
-                queue.pop();
-                p_curr = queue.front();
+                if(!s.empty()) {
+                    node* temp = s.top();
+                    s.pop();
+                    if (temp->right != nullptr) {
+                        s.push(temp->right);
+                        temp = temp->right->left;
+                        while (temp != nullptr) { //pushing the left tree of the curr's right son
+                            s.push(temp);
+                            temp = temp->left;
+                        }
+                    }
+                    if(s.empty()){
+                        this->p_curr = nullptr;
+                    }else{
+                        this->p_curr = s.top();
+                    }
+                }else{ //we finished all the stack- end of the tree
+                    this->p_curr = nullptr;
+                }
                 return *this;
             }
 
-            const InorderIterator operator++(int) {
-                InorderIterator tmp = *this;
-                queue.pop();
-                p_curr = queue.front();
-                return tmp;
-            }
+//            const InorderIterator operator++(int) {
+//                InorderIterator tmp = *this;
+//                queue.pop();
+//                p_curr = queue.front();
+//                return tmp;
+//            }
 
             bool operator==(const InorderIterator &rhs) const {
                 return p_curr == rhs.p_curr;
