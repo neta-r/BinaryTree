@@ -74,6 +74,17 @@ namespace ariel {
                 copy_ctor(root, bt.root);
             }
         }
+        BinaryTree& operator=(BinaryTree<T>&& bt) noexcept {
+            if (root){ delete root;}
+            root  = bt.root;
+            bt.root = nullptr;
+            return *this;
+        }
+
+        BinaryTree(BinaryTree &&bt)  noexcept {
+            this->root = bt.root;
+            bt.root = nullptr;
+        }
 
 
         //class BinaryTree//
@@ -108,10 +119,12 @@ namespace ariel {
             PreorderIterator &operator++() {
                 if(!s.empty()) {
                     s.pop();
-                    if (p_curr->right != nullptr)
+                    if (p_curr->right != nullptr) {
                         s.push(p_curr->right);
-                    if (p_curr->left != nullptr)
+                    }
+                    if (p_curr->left != nullptr) {
                         s.push(p_curr->left);
+                    }
                 }
                 if(s.empty()){
                     p_curr = nullptr;
@@ -121,7 +134,7 @@ namespace ariel {
                 return *this;
             }
 
-            const PreorderIterator operator++(int) {
+            PreorderIterator operator++(int) {
                 const PreorderIterator tmp = *this;
                 ++*this;
                 return tmp;
@@ -202,7 +215,7 @@ namespace ariel {
                 return *this;
             }
 
-            const InorderIterator operator++(int) {
+            InorderIterator operator++(int) {
                 InorderIterator tmp = *this;
                 ++*this;
                 return tmp;
@@ -252,10 +265,12 @@ namespace ariel {
                         curr = s1.top();
                         s1.pop();
                         s2.push(curr);
-                        if (curr->left)
+                        if (curr->left) {
                             s1.push(curr->left);
-                        if (curr->right)
+                        }
+                        if (curr->right) {
                             s1.push(curr->right);
+                        }
                     }
                     p_curr = s2.top();
                 }
