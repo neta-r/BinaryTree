@@ -24,10 +24,6 @@ namespace ariel {
                 this->right = nullptr;
             }
 
-            void setFather(node *father) {
-                this->father = father;
-            }
-
             bool operator==(node other) {
                 return this->info == other->other && this->left == other->left &&
                        this->right == other.right && this->father == other.father;
@@ -84,9 +80,9 @@ namespace ariel {
         //class BinaryTree//
 
         void remove(T data, node *ptr) {
-            typedef typename std::multimap<T, node *>::iterator iterator;
-            std::pair <iterator, iterator> iterpair = map.equal_range(data);
-            iterator it = iterpair.first;
+            typedef typename std::multimap<T, node *>::iterator iter;
+            std::pair <iter, iter> iterpair = map.equal_range(data);
+            iter it = iterpair.first;
             for (; it != iterpair.second; ++it) {
                 if (it->second == ptr) {
                     map.erase(it);
@@ -121,8 +117,8 @@ namespace ariel {
                     f->second->left = nd;
                     map.insert({son, nd});
                 } else { //son exists
+                    remove(f->second->left->info, f->second->left);
                     f->second->left->info = son;
-                    remove(son, f->second->left);
                     map.insert({son, f->second->left});
                 }
             } else {
@@ -145,8 +141,8 @@ namespace ariel {
                     f->second->right = nd;
                     map.insert({son, nd});
                 } else { //son exists
+                    remove(f->second->right->info, f->second->right);
                     f->second->right->info = son;
-                    remove(son, f->second->right);
                     map.insert({son, f->second->right});
                 }
             } else {
@@ -162,24 +158,26 @@ namespace ariel {
         private:
             std::stack<node *> s;
             std::queue<node *> queue;
-            node *p_curr;
+            node *p_curr= nullptr;
 
         public:
             PreorderIterator() : p_curr(nullptr) {}
 
             PreorderIterator(node *root) {
-                s.push(root);
-                node *curr;
-                while (!s.empty()) {
-                    curr = s.top();
-                    s.pop();
-                    queue.push(curr);
-                    if (curr->right != nullptr)
-                        s.push(curr->right);
-                    if (curr->left != nullptr)
-                        s.push(curr->left);
+                if(root) {
+                    s.push(root);
+                    node *curr;
+                    while (!s.empty()) {
+                        curr = s.top();
+                        s.pop();
+                        queue.push(curr);
+                        if (curr->right != nullptr)
+                            s.push(curr->right);
+                        if (curr->left != nullptr)
+                            s.push(curr->left);
+                    }
+                    p_curr = queue.front();
                 }
-                p_curr = queue.front();
             }
 
 
@@ -204,13 +202,7 @@ namespace ariel {
 
             const PreorderIterator operator++(int) {
                 PreorderIterator tmp = *this;
-                if (queue.empty()) {
-                    p_curr = nullptr;
-                }
-                else{
-                    queue.pop();
-                    p_curr = queue.front();
-                }
+                ++*this;
                 return tmp;
             }
 
@@ -324,23 +316,25 @@ namespace ariel {
         private:
             std::stack<node *> s1;
             std::stack<node *> s2;
-            node *p_curr;
+            node *p_curr= nullptr;
         public:
             PostorderIterator() : p_curr(nullptr) {}
 
             PostorderIterator(node *root) {
-                s1.push(root);
-                node *curr = root;
-                while (!s1.empty()) {
-                    curr = s1.top();
-                    s1.pop();
-                    s2.push(curr);
-                    if (curr->left)
-                        s1.push(curr->left);
-                    if (curr->right)
-                        s1.push(curr->right);
+                if(root) {
+                    s1.push(root);
+                    node *curr = root;
+                    while (!s1.empty()) {
+                        curr = s1.top();
+                        s1.pop();
+                        s2.push(curr);
+                        if (curr->left)
+                            s1.push(curr->left);
+                        if (curr->right)
+                            s1.push(curr->right);
+                    }
+                    p_curr = s2.top();
                 }
-                p_curr = s2.top();
             }
 
             node *curr_node() {
@@ -390,8 +384,10 @@ namespace ariel {
         }
 
         ~BinaryTree() {
-            for (auto it = (*this).begin_postorder(); it != (*this).end_postorder(); ++it) {
-                delete it.curr_node();
+            if(root) {
+                for (auto it = (*this).begin_postorder(); it != (*this).end_postorder(); ++it) {
+                    delete it.curr_node();
+                }
             }
         }
     };
