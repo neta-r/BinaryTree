@@ -144,6 +144,19 @@ test/fast:
 .PHONY : test/fast
 
 #=============================================================================
+# Target rules for targets named test1
+
+# Build rule for target.
+test1: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test1
+.PHONY : test1
+
+# fast build rule for target.
+test1/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test1.dir/build.make CMakeFiles/test1.dir/build
+.PHONY : test1/fast
+
+#=============================================================================
 # Target rules for targets named demo
 
 # Build rule for target.
@@ -195,6 +208,33 @@ Demo.s: Demo.cpp.s
 Demo.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/Demo.cpp.s
 .PHONY : Demo.cpp.s
+
+StudentTest1.o: StudentTest1.cpp.o
+
+.PHONY : StudentTest1.o
+
+# target to build an object file
+StudentTest1.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test1.dir/build.make CMakeFiles/test1.dir/StudentTest1.cpp.o
+.PHONY : StudentTest1.cpp.o
+
+StudentTest1.i: StudentTest1.cpp.i
+
+.PHONY : StudentTest1.i
+
+# target to preprocess a source file
+StudentTest1.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test1.dir/build.make CMakeFiles/test1.dir/StudentTest1.cpp.i
+.PHONY : StudentTest1.cpp.i
+
+StudentTest1.s: StudentTest1.cpp.s
+
+.PHONY : StudentTest1.s
+
+# target to generate assembly for a file
+StudentTest1.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test1.dir/build.make CMakeFiles/test1.dir/StudentTest1.cpp.s
+.PHONY : StudentTest1.cpp.s
 
 StudentTest2.o: StudentTest2.cpp.o
 
@@ -260,10 +300,14 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... demo"
 	@echo "... test"
+	@echo "... test1"
 	@echo "... test2"
 	@echo "... Demo.o"
 	@echo "... Demo.i"
 	@echo "... Demo.s"
+	@echo "... StudentTest1.o"
+	@echo "... StudentTest1.i"
+	@echo "... StudentTest1.s"
 	@echo "... StudentTest2.o"
 	@echo "... StudentTest2.i"
 	@echo "... StudentTest2.s"
