@@ -37,7 +37,6 @@ namespace ariel {
         //end class node//
     public:
         //class BinaryTree//
-        std::multimap<T, node *> map;
         node *root;
 
         BinaryTree() {
@@ -78,79 +77,6 @@ namespace ariel {
 
 
         //class BinaryTree//
-
-        void remove(T data, node *ptr) {
-            typedef typename std::multimap<T, node *>::iterator iter;
-            std::pair<iter, iter> iterpair = map.equal_range(data);
-            iter it = iterpair.first;
-            for (; it != iterpair.second; ++it) {
-                if (it->second == ptr) {
-                    map.erase(it);
-                    break;
-                }
-            }
-        }
-
-        BinaryTree<T> &add_root(T data) {
-            if (root == nullptr) { //root doesn't exits
-                root = new node(data);
-                map.insert({data, root});
-            } else { //root exists
-                T old_data = root->info;
-                root->info = data;
-                map.insert({data, root});
-                remove(old_data, root);
-            }
-            return *this;
-        }
-
-        BinaryTree<T> &add_left(T father, T son) {
-            if (root == nullptr) {
-                std::string message = "There is no root";
-                throw std::invalid_argument(message);
-            }
-            auto f = map.find(father);
-            if (f != map.end()) {
-                if (f->second->left == nullptr) { //left son doesn't exists
-                    node *nd = new node(son);
-                    nd->father = f->second;
-                    f->second->left = nd;
-                    map.insert({son, nd});
-                } else { //son exists
-                    remove(f->second->left->info, f->second->left);
-                    f->second->left->info = son;
-                    map.insert({son, f->second->left});
-                }
-            } else {
-                std::string message = "The first argument is not in the tree";
-                throw std::invalid_argument(message);
-            }
-            return *this;
-        }
-
-        BinaryTree<T> &add_right(T father, T son) {
-            if (root == nullptr) {
-                std::string message = "There is no root";
-                throw std::invalid_argument(message);
-            }
-            auto f = map.find(father);
-            if (f != map.end()) {
-                if (f->second->right == nullptr) { //left son doesn't exists
-                    node *nd = new node(son);
-                    nd->father = f->second;
-                    f->second->right = nd;
-                    map.insert({son, nd});
-                } else { //son exists
-                    remove(f->second->right->info, f->second->right);
-                    f->second->right->info = son;
-                    map.insert({son, f->second->right});
-                }
-            } else {
-                std::string message = "The first argument is not in the tree";
-                throw std::invalid_argument(message);
-            }
-            return *this;
-        }
 
         friend std::ostream &operator<<(std::ostream &os, const BinaryTree &BinaryTree) { return os; }
 
@@ -223,7 +149,6 @@ namespace ariel {
         typedef class InorderIterator {
         private:
             node *p_curr;
-            std::queue<node *> queue;
             std::stack<node *> s;
         public:
             InorderIterator() : p_curr(nullptr) {}
@@ -240,6 +165,10 @@ namespace ariel {
                 } else { //taking the most left node as the first one
                     p_curr = s.top();
                 }
+            }
+
+            node* get_curr_node(){
+                return p_curr;
             }
 
             T &operator*() const {
@@ -376,6 +305,66 @@ namespace ariel {
 
         PostorderIterator end_postorder() {
             return PostorderIterator{};
+        }
+
+        node* findFirst(T data){
+            for (auto it = begin_inorder(); it != end_inorder(); ++it){
+                if (*it == data) {
+                    return it.get_curr_node();
+                }
+            }
+            return nullptr;
+        }
+
+        BinaryTree<T> &add_root(T data) {
+            if (root == nullptr) { //root doesn't exits
+                root = new node(data);
+            } else { //root exists
+                root->info = data;
+            }
+            return *this;
+        }
+
+        BinaryTree<T> &add_left(T father, T son) {
+            if (root == nullptr) {
+                std::string message = "There is no root";
+                throw std::invalid_argument(message);
+            }
+            node* f = findFirst(father);
+            if (f != nullptr) { //father was found
+                if (f->left == nullptr) { //left son doesn't exists
+                    node *nd = new node(son);
+                    nd->father = f;
+                    f->left = nd;
+                } else { //son exists
+                    f->left->info = son;
+                }
+            } else {
+                std::string message = "The first argument is not in the tree";
+                throw std::invalid_argument(message);
+            }
+            return *this;
+        }
+
+        BinaryTree<T> &add_right(T father, T son) {
+            if (root == nullptr) {
+                std::string message = "There is no root";
+                throw std::invalid_argument(message);
+            }
+            node* f = findFirst(father);
+            if (f != nullptr) { //father was found
+                if (f->right == nullptr) { //left son doesn't exists
+                    node *nd = new node(son);
+                    nd->father = f;
+                    f->right = nd;
+                } else { //son exists
+                    f->right->info = son;
+                }
+            } else {
+                std::string message = "The first argument is not in the tree";
+                throw std::invalid_argument(message);
+            }
+            return *this;
         }
 
         ~BinaryTree() {
